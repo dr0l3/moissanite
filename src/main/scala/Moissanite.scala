@@ -66,8 +66,6 @@ object Moissanite {
       val lines = possibleSuffixes.init.map(createLine)
       val diamond = lines ++ lines.reverse
       val handleSingleCharCase = if(diamond.length == 2) Seq(diamond.head) else diamond
-      handleSingleCharCase
-          .map(line => line + newline)
-          .reduce((a: String, b:String) => a + b)
+      handleSingleCharCase.map(_ + newline).reduce((a, b) => a + b)
   }
 }
