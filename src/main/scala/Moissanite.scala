@@ -18,6 +18,10 @@ object Moissanite {
   }
 
   def main(args: Array[String]): Unit = {
+    println(diamond('F'))
+    println(diamond('A'))
+    println(diamond('T'))
+    println(diamond('~'))
     println(createDiamond('F'))
     println(createDiamond('A'))
     println(createDiamond('T'))
@@ -36,10 +40,10 @@ object Moissanite {
   def diverge(accumulator: String, max: Int, counter: Int): String = counter match {
       case `max` => accumulator
       case 0 =>
-        val line = spaces(max-counter) + alphabet.charAt(counter) + newline
+        val line = spaces(max-counter) + alphabet.charAt(counter) + spaces(max-counter) + newline
         diverge(accumulator + line, max, counter + 1)
       case _ =>
-        val line = spaces(max-counter) + alphabet.charAt(counter) + spaces(counter * 2 - 1) + alphabet.charAt(counter) + newline
+        val line = spaces(max-counter) + alphabet.charAt(counter) + spaces(counter * 2 - 1) + alphabet.charAt(counter) + spaces(max-counter) + newline
         diverge(accumulator + line, max, counter + 1)
   }
 
@@ -48,5 +52,22 @@ object Moissanite {
     case _ =>
       val line = spaces(max-counter) + alphabet.charAt(counter) + spaces(counter * 2 - 1) + alphabet.charAt(counter) + newline
       converge(accumulator + line, max, counter - 1)
+  }
+  
+  def diamond(rawInput: Char): String = sanitizeInput(rawInput) match {
+    case Left(err) => err
+    case Right(input) =>
+      def createLine(localAlphabet: String): String = {
+        val line = spaces(localAlphabet.tail.length) + localAlphabet.head + spaces(alphabet.indexOf(localAlphabet.head))
+        line + line.reverse.tail
+      }
+  
+      val possibleSuffixes = alphabet.take(alphabet.indexOf(input) + 1).tails.toList
+      val lines = possibleSuffixes.init.map(createLine)
+      val diamond = lines ++ lines.reverse
+      val handleSingleCharCase = if(diamond.length == 2) Seq(diamond.head) else diamond
+      handleSingleCharCase
+          .map(line => line + newline)
+          .reduce((a: String, b:String) => a + b)
   }
 }
